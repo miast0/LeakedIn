@@ -1,0 +1,48 @@
+<%- include('partials/head') %>
+<%- include('partials/nav') %>
+
+<main class="single-column">
+  <%- include('partials/post-card', { post }) %>
+
+  <section class="panel comments-panel" id="comments">
+    <h2>Comments</h2>
+
+    <% comments.forEach(comment => { %>
+      <div class="comment" data-comment-id="<%= comment.id %>">
+        <%- include('partials/avatar', { user: comment, size: 'small' }) %>
+        <div class="comment-bubble">
+          <div class="comment-heading">
+            <div>
+              <a href="/profile/<%= comment.user_id %>"><strong><%= comment.name %></strong></a>
+              <span class="timestamp"><%= new Date(comment.created_at).toLocaleString() %></span>
+            </div>
+            <% if (comment.user_id == currentUser.id && !currentUser.seeded_user) { %>
+              <div class="comment-actions">
+                <button class="icon-button edit-comment-button" title="Edit comment" aria-label="Edit comment">
+                  <svg><use href="/static/img/icons.svg#edit"></use></svg>
+                </button>
+                <form method="post" action="/comments/<%= comment.id %>/delete" onsubmit="return confirm('Delete this comment?')">
+                  <button class="icon-button danger" title="Delete comment" aria-label="Delete comment">
+                    <svg><use href="/static/img/icons.svg#delete"></use></svg>
+                  </button>
+                </form>
+              </div>
+            <% } %>
+          </div>
+          <p class="comment-content"><%= comment.content %></p>
+          <% if (comment.user_id == currentUser.id && !currentUser.seeded_user) { %>
+            <form class="comment-edit-form hidden" method="post" action="/comments/<%= comment.id %>/edit">
+              <textarea name="content" rows="3" required><%= comment.content %></textarea>
+              <div class="edit-form-actions">
+                <button type="button" class="secondary cancel-comment-edit">Cancel</button>
+                <button class="primary">Save</button>
+              </div>
+            </form>
+          <% } %>
+        </div>
+      </div>
+    <% }) %>
+  </section>
+</main>
+
+<%- include('partials/footer') %>

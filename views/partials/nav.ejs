@@ -1,0 +1,36 @@
+<header class="topbar">
+  <div class="nav-inner">
+    <a class="brand" href="/home">
+      <img src="/static/img/logo.svg" alt="LeakedIn">
+      <span>LeakedIn</span>
+    </a>
+
+    <form class="searchbox" action="/search">
+      <input name="q" placeholder="Search" value="<%= typeof q !== 'undefined' ? q : '' %>">
+    </form>
+
+    <nav class="main-nav">
+      <a class="nav-item" href="/home">
+        <svg><use href="/static/img/icons.svg#home"></use></svg>
+        <span>Home</span>
+      </a>
+      <a class="nav-item" href="/network">
+        <svg><use href="/static/img/icons.svg#network"></use></svg>
+        <span>My Network</span>
+      </a>
+      <a class="nav-item muted-link" href="#" title="Messaging is not implemented">
+        <svg><use href="/static/img/icons.svg#message"></use></svg>
+        <span>Messaging</span>
+      </a>
+      <a class="nav-item" href="/profile/<%= currentUser.id %>">
+        <svg><use href="/static/img/icons.svg#profile"></use></svg>
+        <span>My Profile</span>
+      </a>
+      <form action="/logout" method="post">
+        <button class="icon-button nav-logout" title="Sign out" aria-label="Sign out">
+          <svg><use href="/static/img/icons.svg#logout"></use></svg>
+        </button>
+      </form>
+    </nav>
+  </div>
+</header>

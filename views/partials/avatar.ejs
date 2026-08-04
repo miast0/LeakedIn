@@ -1,0 +1,2 @@
+<% const avatarSrc = user.avatar_path || `/static/img/default-avatar-${Number(user.avatar_variant || 0) % 5}.svg`; %>
+<img class="avatar <%= typeof size !== 'undefined' ? size : '' %>" src="<%= avatarSrc %>" alt="<%= user.name %>">

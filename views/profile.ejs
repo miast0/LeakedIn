@@ -1,0 +1,111 @@
+<%- include('partials/head') %>
+<%- include('partials/nav') %>
+
+<main class="single-column">
+  <%- include('partials/flash') %>
+
+  <section class="profile-card">
+    <div class="cover"></div>
+
+<div class="profile-body">
+  <%- include('partials/avatar', {
+    user: profile,
+    size: 'xlarge'
+  }) %>
+
+  <div class="profile-actions">
+    <% if (currentUser.id == profile.id && !profile.seeded_user) { %>
+      <a
+        class="secondary button"
+        href="/profile/edit"
+      >
+        Edit profile
+      </a>
+    <% } else if (currentUser.id != profile.id) { %>
+      <% if (!relation) { %>
+        <form
+          method="post"
+          action="/connections/<%= profile.id %>/request"
+        >
+          <button class="primary">
+            Connect
+          </button>
+        </form>
+      <% } else if (relation.status === 'pending') { %>
+        <button
+          class="secondary"
+          disabled
+        >
+          Pending
+        </button>
+      <% } else { %>
+        <form
+          method="post"
+          action="/connections/<%= profile.id %>/remove"
+        >
+          <button class="secondary">
+            Remove connection
+          </button>
+        </form>
+      <% } %>
+
+      <button
+        class="secondary"
+        disabled
+      >
+        Message
+      </button>
+
+      <% if (profile.show_email) { %>
+        <button
+          class="secondary contact-button"
+          data-email="<%= profile.email %>"
+        >
+          Contact now
+        </button>
+      <% } %>
+    <% } %>
+  </div>
+
+  <h1><%= profile.name %></h1>
+
+  <p class="headline">
+    <%= profile.headline || '' %>
+  </p>
+
+  <p>
+    <%= [profile.job_title, profile.employer]
+      .filter(Boolean)
+      .join(' at ') %>
+  </p>
+
+  <p class="muted">
+    <%= connectionCount %> connections
+  </p>
+
+  <div
+    id="contactEmail"
+    class="contact-email hidden"
+  ></div>
+</div>
+
+  </section>
+
+  <section>
+    <h2>Posts</h2>
+
+<% if (!posts.length) { %>
+  <div class="panel">
+    No visible posts.
+  </div>
+<% } %>
+
+<% posts.forEach(post => { %>
+  <%- include('partials/post-card', { post }) %>
+<% }) %>
+
+  </section>
+</main>
+
+<%- include('partials/footer') %>
+

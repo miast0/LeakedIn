@@ -1,0 +1,38 @@
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: leakedin
+      POSTGRES_USER: leakedin
+      POSTGRES_PASSWORD: leakedin
+      TZ: Europe/Dublin
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/001-schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U leakedin -d leakedin"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  app:
+    build: .
+    environment:
+      PORT: 3000
+      DATABASE_URL: postgresql://leakedin:leakedin@db:5432/leakedin
+      SESSION_SECRET: leakedin-ctf-session-secret
+      NODE_ENV: production
+      TZ: Europe/Dublin
+      ITCON26_DATE: ${ITCON26_DATE:-}
+      CTF_FLAG: ${CTF_FLAG:-CTFHub{Cr4ck1ng-p4ssw0rdz_h4z_n3v3r-b33N-s0-ez}}
+    ports:
+      - "3000:3000"
+    volumes:
+      - uploads_data:/app/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
+  uploads_data:

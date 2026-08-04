@@ -1,0 +1,84 @@
+<article class="post-card" data-post-id="<%= post.id %>">
+  <div class="post-head">
+    <a href="/profile/<%= post.user_id %>"><%- include('avatar', { user: post, size: 'medium' }) %></a>
+    <div class="post-author">
+      <a class="user-name" href="/profile/<%= post.user_id %>"><%= post.name %></a>
+      <div class="subline"><%= [post.job_title, post.employer].filter(Boolean).join(' at ') || 'LeakedIn member' %></div>
+      <div class="timestamp">
+        <%= new Date(post.created_at).toLocaleString() %>
+        <% if (post.is_private) { %><svg class="inline-icon"><use href="/static/img/icons.svg#lock"></use></svg><span>Only you</span><% } %>
+      </div>
+    </div>
+
+    <% if (currentUser.id == post.user_id && !currentUser.seeded_user) { %>
+      <div class="post-owner-actions">
+        <a class="icon-button" href="/posts/<%= post.id %>/edit" title="Edit post" aria-label="Edit post">
+          <svg><use href="/static/img/icons.svg#edit"></use></svg>
+        </a>
+        <form action="/posts/<%= post.id %>/delete" method="post" onsubmit="return confirm('Delete this post?')">
+          <button class="icon-button danger" title="Delete post" aria-label="Delete post">
+            <svg><use href="/static/img/icons.svg#delete"></use></svg>
+          </button>
+        </form>
+      </div>
+    <% } %>
+  </div>
+
+  <% if (post.content) { %><div class="post-content"><%= post.content %></div><% } %>
+  <% if (post.image_path) { %><img class="post-image" src="<%= post.image_path %>" alt="Post image"><% } %>
+
+  <div class="post-meta">
+    <div class="reaction-summary">
+      <% if (post.reaction_count > 0) { %>
+        <% const reactionIcons = {1:'👍',2:'🎉',3:'🤝',4:'❤️',5:'💡',6:'😄','-1':'👎'}; %>
+        <span class="mini-reactions"><%= (post.reaction_types || []).slice(0,3).map(value => reactionIcons[value]).join(' ') %></span>
+        <span><%= post.reaction_count %></span>
+      <% } %>
+    </div>
+    <a href="/posts/<%= post.id %>"><%= post.comment_count %> comments</a>
+  </div>
+
+  <div class="post-actions">
+    <div class="reaction-control">
+      <button class="action-button reaction-main <%= post.my_reaction ? 'active' : '' %>" data-reaction="<%= post.my_reaction || 1 %>" aria-label="React">
+        <span class="reaction-main-emoji"><%= ({1:'👍',2:'🎉',3:'🤝',4:'❤️',5:'💡',6:'😄','-1':'👎'})[post.my_reaction] || '👍' %></span>
+        <span class="action-label"><%= ({1:'Like',2:'Celebrate',3:'Support',4:'Love',5:'Insightful',6:'Funny','-1':'Dislike'})[post.my_reaction] || 'Like' %></span>
+      </button>
+      <div class="reaction-picker" role="menu">
+        <% [[1,'👍','Like'],[2,'🎉','Celebrate'],[3,'🤝','Support'],[4,'❤️','Love'],[5,'💡','Insightful'],[6,'😄','Funny'],[-1,'👎','Dislike']].forEach(([value,emoji,label]) => { %>
+          <button class="reaction-option" data-reaction="<%= value %>" title="<%= label %>" aria-label="<%= label %>"><%= emoji %></button>
+        <% }) %>
+      </div>
+    </div>
+    <a class="action-button" href="/posts/<%= post.id %>#comments">
+      <svg><use href="/static/img/icons.svg#comment"></use></svg>
+      <span class="action-label">Comment</span>
+    </a>
+  </div>
+
+  <% const previews = Array.isArray(post.preview_comments) ? post.preview_comments : []; %>
+  <% if (previews.length) { %>
+    <div class="comment-preview-list">
+      <% previews.forEach(comment => { %>
+        <div class="comment compact-comment">
+          <img class="avatar small" src="<%= comment.avatar_path || `/static/img/default-avatar-${Number(comment.avatar_variant || 0) % 5}.svg` %>" alt="<%= comment.name %>">
+          <div class="comment-bubble">
+            <a href="/profile/<%= comment.user_id %>"><strong><%= comment.name %></strong></a>
+            <p><%= comment.content %></p>
+          </div>
+        </div>
+      <% }) %>
+      <% if (post.comment_count > previews.length) { %><a class="view-more-comments" href="/posts/<%= post.id %>#comments">View all comments</a><% } %>
+    </div>
+  <% } %>
+
+  <form class="inline-comment-form" action="/posts/<%= post.id %>/comments" method="post">
+    <%- include('avatar', { user: currentUser, size: 'small' }) %>
+    <div class="inline-comment-input">
+      <input name="content" placeholder="Add a comment…" required>
+      <button class="icon-button" title="Post comment" aria-label="Post comment">
+        <svg><use href="/static/img/icons.svg#send"></use></svg>
+      </button>
+    </div>
+  </form>
+</article>
