@@ -4,7 +4,7 @@ const postingUsers = [
     name: 'John Smith',
     email: 'jsmith@globalpharma.com',
     password: 'Twinkle2019',
-    headline: 'Connecting healthcare innovation with clear, human-centred marketing',
+    headline: 'Cat Lover, Father, Marketer. In that order',
     employer: 'GlobalPharma plc',
     jobTitle: 'Marketing Director',
     showEmail: true,

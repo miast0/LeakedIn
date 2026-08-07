@@ -30,11 +30,14 @@ svg { width: 20px; height: 20px; fill: currentColor; }
 .nav-item { min-width: 74px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; padding: 7px 9px; color: #555b61; font-size: 12px; border-bottom: 2px solid transparent; }
 .nav-item:hover { color: var(--text); background: var(--hover); }
 .nav-item svg { width: 23px; height: 23px; }
+.mobile-search { display: none; }
 .muted-link { color: #8a8f94; }
 .nav-logout { height: 100%; width: 48px; border-radius: 8px; }
 
 .layout { max-width: 1440px; margin: 24px auto; display: grid; grid-template-columns: 225px minmax(0,900px) 225px; gap: 24px; padding: 0 16px; }
 .sidebar, .rightbar, .panel, .composer, .post-card, .profile-card, .person-row { background: var(--card); border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow); }
+.rightbar { height: 10rem;}
+.sidebar { height:10rem;}
 .profile-mini { padding: 24px; display: flex; align-items: center; flex-direction: column; text-align: center; gap: 8px; }
 .profile-mini span, .subline, .timestamp, .muted, .hint, .person-row span { color: var(--muted); font-size: 13px; }
 
@@ -150,8 +153,11 @@ svg { width: 20px; height: 20px; fill: currentColor; }
   .auth-brand h1 { font-size: 36px; }
   .auth-card, .auth-card.wide { width: 100%; }
   .brand span, .searchbox { display: none; }
-  .nav-inner { gap: 8px; }
-  .main-nav { margin-left: auto; }
+  .mobile-search { display: flex; }
+  .nav-inner { gap: 8px; padding: 0 8px; }
+  .main-nav { gap: 0; margin-left: auto; }
+  .nav-item { min-width: 40px; padding-inline: 5px; }
+  .nav-logout { width: 40px; }
   .profile-actions { float: none; flex-wrap: wrap; margin-bottom: 20px; }
   .cover { height: 130px; }
   .action-label { display: none; }

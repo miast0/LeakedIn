@@ -3,8 +3,8 @@ const comments = [
   {
     post: 'elloit-dog',
     user: 'john-target',
-    at: daysAgo(36, 9, 20),
-    content: 'My cat Twinkles is my true first child, so I will have to disagree with you on this one.'
+    at: daysAgo(1, 2, 3),
+    content: 'My cat Twinkle is my true first child, so I will have to disagree with you on this one.'
   },
   {
     post: 'elloit-dog',

@@ -92,11 +92,14 @@ app.post('/login', async (req, res, next) => {
     const password = String(req.body.password || '');
     const { rows } = await pool.query('SELECT id, password_hash FROM users WHERE email=$1', [email]);
     if (!rows[0] || rows[0].password_hash !== sha256(password)) {
-      flash(req, 'error', 'Incorrect email or password.');
-      return res.redirect('/login');
+      return res.status(401).render('login', {
+        title: 'Sign in',
+        flash: { type: 'error', message: 'Incorrect email or password.' },
+        email
+      });
     }
     req.session.userId = rows[0].id;
-    res.redirect('/home');
+    return req.session.save(() => res.redirect('/home'));
   } catch (err) { next(err); }
 });
 app.get('/register', (req, res) => {

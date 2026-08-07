@@ -133,7 +133,7 @@ const posts = [
   {
     key: 'elloit-dog',
     user: 'elloit',
-    at: daysAgo(37, 18, 10),
+    at: daysAgo(1, 2, 3),
     content: 'Unpopular office debate settled: I am firmly a dog person. They are loyal, observant and somehow always know when a long editing session needs to end.'
   },
   {
