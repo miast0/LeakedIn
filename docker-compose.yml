@@ -23,10 +23,11 @@ services:
       SESSION_SECRET: leakedin-ctf-session-secret
       NODE_ENV: production
       TZ: Europe/Dublin
+      SEED_SCENARIO: ${SEED_SCENARIO:-itcon}
       ITCON26_DATE: ${ITCON26_DATE:-}
-      CTF_FLAG: ${CTF_FLAG:-CTFHub{Cr4ck1ng-p4ssw0rdz_h4z_n3v3r-b33N-s0-ez}}
+      SECRET_POST: ${SECRET_POST}
     ports:
-      - "3000:3000"
+      - "${EXPOSED_PORT}:3000"
     volumes:
       - uploads_data:/app/uploads
     depends_on:
