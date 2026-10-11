@@ -17,7 +17,7 @@ if (Number.isNaN(eventDate.getTime())) throw new Error('ITCON26_DATE must use YY
 const eventLabel = eventDate.toLocaleDateString('en-IE', { day: 'numeric', month: 'long', year: 'numeric' });
 const uploadSeedRoot = path.join(__dirname, 'uploads-seed');
 const uploadRoot = path.join(__dirname, '..', 'uploads');
-const allowedExtensions = new Set(['.png', '.jpg', '.jpeg']);
+const allowedExtensions = new Set(['.png', '.jpg', '.jpeg', '.webp']);
 const hash = value => crypto.createHash('sha256').update(value, 'utf8').digest('hex');
 
 function timestamp(day, time) {
@@ -48,7 +48,7 @@ function copyUpload(relativePath, type) {
   if (!source.startsWith(path.resolve(uploadSeedRoot) + path.sep)) throw new Error(`Seed upload escapes shared folder: ${relativePath}`);
   if (!fs.existsSync(source)) throw new Error(`Seed upload not found: ${relativePath}`);
   const extension = path.extname(source).toLowerCase();
-  if (!allowedExtensions.has(extension)) throw new Error(`Seed upload must be PNG or JPG: ${relativePath}`);
+  if (!allowedExtensions.has(extension)) throw new Error(`Seed upload must be PNG, JPG or WebP: ${relativePath}`);
   const filename = `seed-${Date.now()}-${crypto.randomBytes(10).toString('hex')}${extension === '.jpeg' ? '.jpg' : extension}`;
   const destination = path.join(uploadRoot, type, filename);
   fs.mkdirSync(path.dirname(destination), { recursive: true });
@@ -118,7 +118,7 @@ async function main() {
       }
     }
 
-    const reactions = [1, 2, 3, 4, 5, 6, -1];
+    const reactions = [1, 2, 3, 4, 5, 6];
     for (let postIndex = 0; postIndex < publicPosts.length; postIndex += 1) {
       const post = publicPosts[postIndex];
       const candidates = postingUsers.filter(user => user !== post.user);

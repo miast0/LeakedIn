@@ -1,0 +1,45 @@
+<%- include('partials/head') %>
+<%- include('partials/nav') %>
+
+<main class="notifications-layout">
+  <aside class="notification-settings panel">
+    <h2>Manage your notifications</h2>
+    <a href="/">View settings</a>
+  </aside>
+
+  <section class="notification-feed panel">
+    <h1>Notifications</h1>
+    <% if (!notifications.length) { %>
+      <div class="notification-empty">
+        <h2>No notifications yet</h2>
+        <p class="muted">Updates about your posts and connection invitations will appear here.</p>
+      </div>
+    <% } %>
+
+    <% const reactionNames = {1:'liked',2:'celebrated',3:'supported',4:'loved',5:'found insightful',6:'found funny'}; %>
+    <% notifications.forEach(notification => { %>
+      <% const href = notification.type === 'connection' ? '/network' : `/posts/${notification.post_id}`; %>
+      <a class="notification-row<%= notification.read_at ? '' : ' unread' %>" href="<%= href %>">
+        <%- include('partials/avatar', { user: notification, size: 'medium' }) %>
+        <div class="notification-copy">
+          <% if (notification.type === 'comment') { %>
+            <p><strong><%= notification.name %></strong> commented on your post.</p>
+          <% } else if (notification.type === 'reaction') { %>
+            <p><strong><%= notification.name %></strong> <%= reactionNames[notification.reaction] || 'reacted to' %> your post.</p>
+          <% } else { %>
+            <p><strong><%= notification.name %></strong> sent you an invitation to connect.</p>
+          <% } %>
+          <% if (notification.post_content) { %><p class="notification-context"><%= notification.post_content %></p><% } %>
+          <span class="notification-time"><%= new Date(notification.created_at).toLocaleString() %></span>
+        </div>
+        <% if (notification.type === 'connection') { %><span class="secondary button notification-cta">View invitation</span><% } %>
+      </a>
+    <% }) %>
+  </section>
+
+  <aside class="notification-right-rail">
+    <%- include('partials/right-footer') %>
+  </aside>
+</main>
+
+<%- include('partials/footer') %>

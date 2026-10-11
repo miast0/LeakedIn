@@ -10,31 +10,65 @@
     </form>
 
     <nav class="main-nav">
-      <a class="nav-item mobile-search" href="/search" title="Search" aria-label="Search">
+      <a class="nav-item mobile-search<%= currentPath === '/search' ? ' active' : '' %>" href="/search" title="Search" aria-label="Search">
         <svg><use href="/static/img/icons.svg#search"></use></svg>
         <span>Search</span>
       </a>
-      <a class="nav-item" href="/home">
+      <a class="nav-item<%= currentPath === '/home' ? ' active' : '' %>" href="/home">
         <svg><use href="/static/img/icons.svg#home"></use></svg>
         <span>Home</span>
       </a>
-      <a class="nav-item" href="/network">
+      <a class="nav-item<%= currentPath === '/network' ? ' active' : '' %>" href="/network">
         <svg><use href="/static/img/icons.svg#network"></use></svg>
         <span>My Network</span>
       </a>
-      <a class="nav-item muted-link" href="#" title="Messaging is not implemented">
+      <a class="nav-item desktop-nav-extra" href="/">
+        <svg class="solid-nav-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path fill="currentColor" d="M9 3h6a2 2 0 0 1 2 2v1h3a2 2 0 0 1 2 2v3H14v-1h-4v1H2V8a2 2 0 0 1 2-2h3V5a2 2 0 0 1 2-2Zm0 3h6V5H9v1Zm1 7h4v-1h8v7a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7h8v1Z"/>
+        </svg>
+        <span>Jobs</span>
+      </a>
+      <a class="nav-item" href="/">
         <svg><use href="/static/img/icons.svg#message"></use></svg>
         <span>Messaging</span>
       </a>
-      <a class="nav-item" href="/profile/<%= currentUser.id %>">
-        <svg><use href="/static/img/icons.svg#profile"></use></svg>
-        <span>My Profile</span>
+      <a class="nav-item<%= currentPath === '/notifications' ? ' active' : '' %> notification-nav" href="/notifications">
+        <svg class="solid-nav-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path fill="currentColor" d="M12 2a1.5 1.5 0 0 1 1.45 1.12A6 6 0 0 1 18 9v4.3l2.7 3.7H3.3L6 13.3V9a6 6 0 0 1 4.55-5.88A1.5 1.5 0 0 1 12 2Z"/>
+          <path fill="currentColor" d="M9 19h6a3 3 0 0 1-6 0Z"/>
+        </svg>
+        <span id="notificationBadge" class="notification-badge<%= notificationCount ? '' : ' hidden' %>" aria-label="<%= notificationCount %> unread notifications"><%= notificationCount > 99 ? '99+' : notificationCount %></span>
+        <span>Notifications</span>
       </a>
-      <form action="/logout" method="post">
-        <button class="icon-button nav-logout" title="Sign out" aria-label="Sign out">
-          <svg><use href="/static/img/icons.svg#logout"></use></svg>
-        </button>
-      </form>
+      <details class="nav-profile-menu">
+        <summary class="nav-item<%= currentPath.startsWith('/profile') ? ' active' : '' %>">
+          <%- include('avatar', { user: currentUser, size: 'small' }) %>
+          <span>Me <span class="nav-caret">▼</span></span>
+        </summary>
+        <div class="nav-dropdown">
+          <div class="nav-dropdown-profile">
+            <%- include('avatar', { user: currentUser, size: 'medium' }) %>
+            <div>
+              <strong><%= currentUser.name %></strong>
+              <span><%= currentUser.headline || [currentUser.job_title, currentUser.employer].filter(Boolean).join(' at ') || 'LeakedIn member' %></span>
+            </div>
+          </div>
+          <a class="secondary button view-profile" href="/profile/<%= currentUser.id %>">View Profile</a>
+          <div class="dropdown-section">
+            <strong>Account</strong>
+            <a href="/">Settings &amp; Privacy</a>
+            <a href="/">Help</a>
+            <a href="/">Language</a>
+          </div>
+          <form action="/logout" method="post">
+            <button class="dropdown-signout">Sign Out</button>
+          </form>
+        </div>
+      </details>
+      <a class="nav-item nav-business desktop-nav-extra" href="/">
+        <svg><use href="/static/img/icons.svg#business"></use></svg>
+        <span>For Business <span class="nav-caret">▼</span></span>
+      </a>
     </nav>
   </div>
 </header>

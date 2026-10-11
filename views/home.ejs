@@ -1,1 +1,62 @@
-<%- include('partials/head') %><%- include('partials/nav') %><main class="layout"><aside class="sidebar"><div class="profile-mini"><%- include('partials/avatar', { user: currentUser, size: 'large' }) %><a href="/profile/<%= currentUser.id %>"><strong><%= currentUser.name %></strong></a><span><%= [currentUser.job_title, currentUser.employer].filter(Boolean).join(' at ') || 'LeakedIn member' %></span></div></aside><section class="feed"><%- include('partials/flash') %><div class="composer"><div class="composer-row"><%- include('partials/avatar', { user: currentUser, size: 'medium' }) %><button id="openComposer" class="composer-trigger">Start a post</button></div><form id="composerForm" method="post" action="/posts" enctype="multipart/form-data" class="stack hidden"><textarea name="content" rows="5" placeholder="What do you want to talk about?"></textarea><label>Image <span class="hint">PNG or JPG, max 5 MB</span><input type="file" name="image" accept="image/png,image/jpeg"></label><label class="check"><input type="checkbox" name="is_private"> Private post, visible only to me</label><button class="primary">Post</button></form></div><div id="feed"></div><div id="feedStatus" class="feed-status">Loading posts...</div></section><aside class="rightbar"><div class="panel"><h3>LeakedIn News</h3><p>Oversharing remains the fastest-growing professional skill.</p></div></aside></main><script>window.currentUserAvatar = <%- JSON.stringify(currentUser.avatar_path || `/static/img/default-avatar-${Number(currentUser.avatar_variant || 0) % 5}.svg`) %>;</script><%- include('partials/footer') %>
+<%- include('partials/head') %>
+<%- include('partials/nav') %>
+<main class="layout">
+  <aside class="sidebar">
+    <div class="profile-mini">
+      <%- include('partials/avatar', { user: currentUser, size: 'large' }) %>
+      <a href="/profile/<%= currentUser.id %>"><strong><%= currentUser.name %></strong></a>
+      <span><%= currentUser.headline || [currentUser.job_title, currentUser.employer].filter(Boolean).join(' at ') || 'LeakedIn member' %></span>
+    </div>
+  </aside>
+
+  <section class="feed">
+    <%- include('partials/flash') %>
+    <div class="composer">
+      <div class="composer-row">
+        <%- include('partials/avatar', { user: currentUser, size: 'medium' }) %>
+        <button id="openComposer" class="composer-trigger">Start a post</button>
+      </div>
+      <div class="composer-actions">
+        <button type="button" data-composer-mode="video"><svg class="composer-video"><use href="/static/img/icons.svg#video"></use></svg><span>Video</span></button>
+        <button type="button" data-composer-mode="image"><svg class="composer-media"><use href="/static/img/icons.svg#image"></use></svg><span>Image</span></button>
+        <button type="button" data-open-composer data-composer-title="Write article"><svg class="composer-article"><use href="/static/img/icons.svg#article"></use></svg><span>Write article</span></button>
+      </div>
+    </div>
+    <div id="feed"></div>
+    <div id="feedStatus" class="feed-status">Loading posts…</div>
+  </section>
+
+  <aside class="rightbar">
+    <section class="panel news-panel">
+      <h3>LeakedIn News <span aria-hidden="true">ⓘ</span></h3>
+      <p><strong>ITCON26 brings technology leaders together</strong><br><span class="muted">Top news · 2h ago</span></p>
+      <p><strong>Security skills remain in demand</strong><br><span class="muted">3h ago · 1,204 readers</span></p>
+      <p><strong>Professionals rethink digital privacy</strong><br><span class="muted">5h ago · 864 readers</span></p>
+    </section>
+    <%- include('partials/right-footer') %>
+  </aside>
+</main>
+
+<div id="composerModal" class="composer-modal hidden" role="dialog" aria-modal="true" aria-labelledby="composerTitle">
+  <div class="composer-dialog">
+    <div class="composer-dialog-head">
+      <h2 id="composerTitle">Create a post</h2>
+      <button id="closeComposer" class="icon-button" type="button" aria-label="Close post composer">×</button>
+    </div>
+    <form id="composerForm" method="post" action="/posts" enctype="multipart/form-data">
+      <div class="composer-identity">
+        <%- include('partials/avatar', { user: currentUser, size: 'medium' }) %>
+        <div><strong><%= currentUser.name %></strong><span>Post to anyone</span></div>
+      </div>
+      <textarea id="composerText" name="content" rows="9" placeholder="What do you want to talk about?"></textarea>
+      <input id="composerMedia" class="hidden" type="file" name="media">
+      <div id="selectedMedia" class="selected-media hidden"></div>
+      <div class="composer-dialog-footer">
+        <label class="check"><input type="checkbox" name="is_private"> Visible only to me</label>
+        <button class="primary">Post</button>
+      </div>
+    </form>
+  </div>
+</div>
+<script>window.currentUserAvatar = <%- JSON.stringify(currentUser.avatar_path || `/static/img/default-avatar-${Number(currentUser.avatar_variant || 0) % 5}.svg`) %>;</script>
+<%- include('partials/footer') %>

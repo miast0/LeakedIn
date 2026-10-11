@@ -2,9 +2,9 @@
 <%- include('partials/nav') %>
 
 <main class="single-column">
-  <%- include('partials/post-card', { post }) %>
+  <%- include('partials/post-card', { post, showCommentForm: true, hideCommentPreviews: true }) %>
 
-  <section class="panel comments-panel" id="comments">
+  <section class="panel comments-panel" id="comments" data-comments-list>
     <h2>Comments</h2>
 
     <% comments.forEach(comment => { %>
@@ -21,7 +21,7 @@
                 <button class="icon-button edit-comment-button" title="Edit comment" aria-label="Edit comment">
                   <svg><use href="/static/img/icons.svg#edit"></use></svg>
                 </button>
-                <form method="post" action="/comments/<%= comment.id %>/delete" onsubmit="return confirm('Delete this comment?')">
+                <form class="async-comment-delete" method="post" action="/comments/<%= comment.id %>/delete" data-confirm="Delete this comment?">
                   <button class="icon-button danger" title="Delete comment" aria-label="Delete comment">
                     <svg><use href="/static/img/icons.svg#delete"></use></svg>
                   </button>

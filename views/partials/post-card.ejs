@@ -15,7 +15,7 @@
         <a class="icon-button" href="/posts/<%= post.id %>/edit" title="Edit post" aria-label="Edit post">
           <svg><use href="/static/img/icons.svg#edit"></use></svg>
         </a>
-        <form action="/posts/<%= post.id %>/delete" method="post" onsubmit="return confirm('Delete this post?')">
+        <form class="async-post-delete" action="/posts/<%= post.id %>/delete" method="post" data-confirm="Delete this post?">
           <button class="icon-button danger" title="Delete post" aria-label="Delete post">
             <svg><use href="/static/img/icons.svg#delete"></use></svg>
           </button>
@@ -25,27 +25,29 @@
   </div>
 
   <% if (post.content) { %><div class="post-content"><%= post.content %></div><% } %>
-  <% if (post.image_path) { %><img class="post-image" src="<%= post.image_path %>" alt="Post image"><% } %>
+  <% if (post.image_path && /\.(mp4|webm)$/i.test(post.image_path)) { %><video class="post-image" src="<%= post.image_path %>" controls preload="metadata"></video><% } else if (post.image_path) { %><img class="post-image" src="<%= post.image_path %>" alt="Post image"><% } %>
 
   <div class="post-meta">
-    <div class="reaction-summary">
+    <div class="reaction-summary" data-reaction-summary>
       <% if (post.reaction_count > 0) { %>
-        <% const reactionIcons = {1:'👍',2:'🎉',3:'🤝',4:'❤️',5:'💡',6:'😄','-1':'👎'}; %>
+        <% const reactionIcons = {1:'👍',2:'🎉',3:'🤝',4:'❤️',5:'💡',6:'😄'}; %>
         <span class="mini-reactions"><%= (post.reaction_types || []).slice(0,3).map(value => reactionIcons[value]).join(' ') %></span>
         <span><%= post.reaction_count %></span>
       <% } %>
     </div>
-    <a href="/posts/<%= post.id %>"><%= post.comment_count %> comments</a>
+    <a href="/posts/<%= post.id %>" data-comment-count><%= post.comment_count %> comments</a>
   </div>
 
-  <div class="post-actions">
+  <div class="post-actions linkedin-actions">
     <div class="reaction-control">
       <button class="action-button reaction-main <%= post.my_reaction ? 'active' : '' %>" data-reaction="<%= post.my_reaction || 1 %>" aria-label="React">
-        <span class="reaction-main-emoji"><%= ({1:'👍',2:'🎉',3:'🤝',4:'❤️',5:'💡',6:'😄','-1':'👎'})[post.my_reaction] || '👍' %></span>
-        <span class="action-label"><%= ({1:'Like',2:'Celebrate',3:'Support',4:'Love',5:'Insightful',6:'Funny','-1':'Dislike'})[post.my_reaction] || 'Like' %></span>
+        <span class="reaction-main-emoji">
+          <% if (post.my_reaction) { %><%= ({1:'👍',2:'🎉',3:'🤝',4:'❤️',5:'💡',6:'😄'})[post.my_reaction] %><% } else { %><svg><use href="/static/img/icons.svg#like"></use></svg><% } %>
+        </span>
+        <span class="action-label"><%= ({1:'Like',2:'Celebrate',3:'Support',4:'Love',5:'Insightful',6:'Funny'})[post.my_reaction] || 'Like' %></span>
       </button>
       <div class="reaction-picker" role="menu">
-        <% [[1,'👍','Like'],[2,'🎉','Celebrate'],[3,'🤝','Support'],[4,'❤️','Love'],[5,'💡','Insightful'],[6,'😄','Funny'],[-1,'👎','Dislike']].forEach(([value,emoji,label]) => { %>
+        <% [[1,'👍','Like'],[2,'🎉','Celebrate'],[3,'🤝','Support'],[4,'❤️','Love'],[5,'💡','Insightful'],[6,'😄','Funny']].forEach(([value,emoji,label]) => { %>
           <button class="reaction-option" data-reaction="<%= value %>" title="<%= label %>" aria-label="<%= label %>"><%= emoji %></button>
         <% }) %>
       </div>
@@ -54,10 +56,18 @@
       <svg><use href="/static/img/icons.svg#comment"></use></svg>
       <span class="action-label">Comment</span>
     </a>
+    <button class="action-button" type="button" aria-label="Repost">
+      <svg><use href="/static/img/icons.svg#repost"></use></svg>
+      <span class="action-label">Repost</span>
+    </button>
+    <button class="action-button" type="button" aria-label="Send">
+      <svg><use href="/static/img/icons.svg#send"></use></svg>
+      <span class="action-label">Send</span>
+    </button>
   </div>
 
   <% const previews = Array.isArray(post.preview_comments) ? post.preview_comments : []; %>
-  <% if (previews.length) { %>
+  <% if (previews.length && !(typeof hideCommentPreviews !== 'undefined' && hideCommentPreviews)) { %>
     <div class="comment-preview-list">
       <% previews.forEach(comment => { %>
         <div class="comment compact-comment">
@@ -72,7 +82,8 @@
     </div>
   <% } %>
 
-  <form class="inline-comment-form" action="/posts/<%= post.id %>/comments" method="post">
+  <% if (typeof showCommentForm !== 'undefined' && showCommentForm) { %>
+  <form class="inline-comment-form post-detail-comment-form async-comment-form" action="/posts/<%= post.id %>/comments" method="post">
     <%- include('avatar', { user: currentUser, size: 'small' }) %>
     <div class="inline-comment-input">
       <input name="content" placeholder="Add a comment…" required>
@@ -81,4 +92,5 @@
       </button>
     </div>
   </form>
+  <% } %>
 </article>

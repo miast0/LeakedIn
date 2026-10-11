@@ -23,7 +23,7 @@
       </a>
     <% } else if (currentUser.id != profile.id) { %>
       <% if (!relation) { %>
-        <form
+        <form class="async-connection-form"
           method="post"
           action="/connections/<%= profile.id %>/request"
         >
@@ -39,7 +39,7 @@
           Pending
         </button>
       <% } else { %>
-        <form
+        <form class="async-connection-form"
           method="post"
           action="/connections/<%= profile.id %>/remove"
         >
@@ -79,8 +79,8 @@
       .join(' at ') %>
   </p>
 
-  <p class="muted">
-    <%= connectionCount %> connections
+  <p class="muted" data-connection-count="<%= connectionCount %>">
+    <%= connectionCount %> connection<%= connectionCount === 1 ? '' : 's' %>
   </p>
 
   <div
@@ -92,11 +92,11 @@
   </section>
 
   <section>
-    <h2>Posts</h2>
+    <h2 class="section-heading">Activity</h2>
 
 <% if (!posts.length) { %>
   <div class="panel">
-    No visible posts.
+    <p class="muted empty-state">No visible posts yet.</p>
   </div>
 <% } %>
 

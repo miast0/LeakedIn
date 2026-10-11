@@ -1,1 +1,55 @@
-<%- include('partials/head') %><%- include('partials/nav') %><main class="single-column"><section class="panel"><h1>My Network</h1></section><section class="panel"><h2>Invitations</h2><% if (!incoming.length) { %><p class="muted">No pending invitations.</p><% } %><% incoming.forEach(user => { %><div class="person-row"><%- include('partials/avatar', { user, size:'medium' }) %><div class="grow"><a href="/profile/<%= user.id %>"><strong><%= user.name %></strong></a><span><%= [user.job_title, user.employer].filter(Boolean).join(' at ') || 'LeakedIn member' %></span></div><form method="post" action="/connections/<%= user.id %>/accept"><button class="primary">Accept</button></form><form method="post" action="/connections/<%= user.id %>/reject"><button class="secondary">Ignore</button></form></div><% }) %></section><section class="panel"><h2>Connections</h2><% connections.forEach(user => { %><a class="person-row" href="/profile/<%= user.id %>"><%- include('partials/avatar', { user, size:'medium' }) %><div><strong><%= user.name %></strong><span><%= [user.job_title, user.employer].filter(Boolean).join(' at ') || 'LeakedIn member' %></span></div></a><% }) %></section><section class="panel"><h2>Sent requests</h2><% outgoing.forEach(user => { %><a class="person-row" href="/profile/<%= user.id %>"><%- include('partials/avatar', { user, size:'medium' }) %><div><strong><%= user.name %></strong><span><%= [user.job_title, user.employer].filter(Boolean).join(' at ') || 'LeakedIn member' %></span></div></a><% }) %></section></main><%- include('partials/footer') %>
+<%- include('partials/head') %>
+<%- include('partials/nav') %>
+
+<main class="single-column network-page">
+  <section class="panel page-heading">
+    <h1>Manage my network</h1>
+  </section>
+
+  <section class="panel people-panel">
+    <h2>Invitations</h2>
+    <% if (!incoming.length) { %><p class="muted empty-state">No pending invitations.</p><% } %>
+    <% incoming.forEach(user => { %>
+      <div class="person-row" data-connection-row>
+        <%- include('partials/avatar', { user, size: 'medium' }) %>
+        <div class="grow">
+          <a href="/profile/<%= user.id %>"><strong><%= user.name %></strong></a>
+          <span><%= user.headline || [user.job_title, user.employer].filter(Boolean).join(' at ') || 'LeakedIn member' %></span>
+        </div>
+        <form class="async-connection-form" method="post" action="/connections/<%= user.id %>/accept" data-remove-row><button class="primary">Accept</button></form>
+        <form class="async-connection-form" method="post" action="/connections/<%= user.id %>/reject" data-remove-row><button class="secondary">Ignore</button></form>
+      </div>
+    <% }) %>
+  </section>
+
+  <section class="panel people-panel">
+    <h2><%= connections.length %> connection<%= connections.length === 1 ? '' : 's' %></h2>
+    <% if (!connections.length) { %><p class="muted empty-state">Your connections will appear here.</p><% } %>
+    <% connections.forEach(user => { %>
+      <a class="person-row" href="/profile/<%= user.id %>">
+        <%- include('partials/avatar', { user, size: 'medium' }) %>
+        <div>
+          <strong><%= user.name %></strong>
+          <span><%= user.headline || [user.job_title, user.employer].filter(Boolean).join(' at ') || 'LeakedIn member' %></span>
+        </div>
+      </a>
+    <% }) %>
+  </section>
+
+  <% if (outgoing.length) { %>
+    <section class="panel people-panel">
+      <h2>Sent invitations</h2>
+      <% outgoing.forEach(user => { %>
+        <a class="person-row" href="/profile/<%= user.id %>">
+          <%- include('partials/avatar', { user, size: 'medium' }) %>
+          <div>
+            <strong><%= user.name %></strong>
+            <span><%= user.headline || [user.job_title, user.employer].filter(Boolean).join(' at ') || 'LeakedIn member' %></span>
+          </div>
+        </a>
+      <% }) %>
+    </section>
+  <% } %>
+</main>
+
+<%- include('partials/footer') %>

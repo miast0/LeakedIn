@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS comments (
 CREATE TABLE IF NOT EXISTS reactions (
   post_id BIGINT NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
   user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-  reaction SMALLINT NOT NULL CHECK (reaction IN (-1, 1, 2, 3, 4, 5, 6)),
+  reaction SMALLINT NOT NULL CHECK (reaction IN (1, 2, 3, 4, 5, 6)),
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   PRIMARY KEY (post_id, user_id)
@@ -54,7 +54,23 @@ CREATE TABLE IF NOT EXISTS connections (
   CHECK (requester_id <> recipient_id)
 );
 
+CREATE TABLE IF NOT EXISTS notifications (
+  id BIGSERIAL PRIMARY KEY,
+  user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  actor_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  type VARCHAR(20) NOT NULL CHECK (type IN ('comment', 'reaction', 'connection')),
+  post_id BIGINT REFERENCES posts(id) ON DELETE CASCADE,
+  comment_id BIGINT REFERENCES comments(id) ON DELETE CASCADE,
+  reaction SMALLINT CHECK (reaction IN (1, 2, 3, 4, 5, 6)),
+  read_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  CHECK (user_id <> actor_id)
+);
+
 CREATE INDEX IF NOT EXISTS idx_posts_public_feed ON posts (created_at DESC, id DESC) WHERE is_private = FALSE;
 CREATE INDEX IF NOT EXISTS idx_posts_user ON posts (user_id, created_at DESC, id DESC);
 CREATE INDEX IF NOT EXISTS idx_comments_post ON comments (post_id, created_at ASC);
+CREATE INDEX IF NOT EXISTS idx_notifications_user ON notifications (user_id, created_at DESC, id DESC);
+CREATE INDEX IF NOT EXISTS idx_notifications_unread ON notifications (user_id, id DESC) WHERE read_at IS NULL;
 CREATE INDEX IF NOT EXISTS idx_users_search ON users USING GIN (to_tsvector('simple', coalesce(name,'') || ' ' || coalesce(headline,'') || ' ' || coalesce(employer,'') || ' ' || coalesce(job_title,'')));
